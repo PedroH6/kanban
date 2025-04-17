@@ -1,38 +1,16 @@
 import { Task } from "../entities/Tasks"
+import { useTasks } from "../hooks/useTasks"
 import { TaskCard } from "./TaskCard"
 import { Badge, Flex, Grid, ScrollArea } from "@radix-ui/themes"
 
 export const TaskBoard: React.FC = () => {
+    const {tasks} = useTasks()
 
-  const tasksTodo: Task[] = [
-    {
-        "id": 4,
-        "title": "Implementar testes",
-        "description": "Desenvolver os testes automatizados na nova funcionalidade do aplicativo.",
-        "status": "todo",
-        "priority": "medium"
-      }
-  ]
+  const tasksTodo: Task[] = tasks.filter(task => task.status === "todo") ?? [ ]
   
-  const tasksInProgress: Task[] = [
-    {
-        "id": 2,
-        "title": "Reunião com a equipe",
-        "description": "Reunião para discutir o progresso do projeto e próximos passos.",
-        "status": "todo",
-        "priority": "heigh"
-      },
-  ]
+  const tasksInProgress: Task[] = tasks.filter(task => task.status === "doing") ?? [ ]
 
-  const tasksDone: Task[] = [
-    {
-        "id": 1,
-        "title": "Enviar relatório",
-        "description": "Enviar o relatório mensal para o departamento financeiro.",
-        "status": "doing",
-        "priority": "heigh"
-      },
-  ]
+  const tasksDone: Task[] = tasks.filter(task => task.status === "done") ?? [ ]
 
   return (
     <ScrollArea scrollbars="horizontal">
