@@ -1,53 +1,40 @@
-import { Badge, Button, Card, Flex, Text } from "@radix-ui/themes"
-import { Task, TaskPriority, TaskStatus } from "../entities/Tasks"
+import { useContext } from "react"
+import { Task } from "../entities/Tasks"
+import { TasksContext } from "../contexts/TaskContexts"
 
 interface TaskCardProps {
   task: Task
 }
 
 export const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
-  const getActionText = (status: TaskStatus) => {
-    const actionTexts = {
-      "todo": "Iniciar",
-      "doing": "Concluir",
-      "done": "Arquivar"
-    }
-    return actionTexts[status]
-  }
+  const { updateTask, deleteTask } = useContext(TasksContext)
 
-  const getActionColor = (status: TaskStatus) => {
-    const actionColors: { [key: string]: "indigo" | "green" | "bronze" } = {
-      "todo": "indigo",
-      "doing": "green",
-      "done": "bronze"
+  const update = () => {
+    if (task.status === "todo") {
+      updateTask(task.id, { status: "doing" })
+    } else if (task.status === "doing") {
+      updateTask(task.id, { status: "done" })
+    } else {
+      updateTask(task.id, { status: "todo" })
     }
-    return actionColors[status]
-  }
-
-  const getPriorityColor = (priority: TaskPriority) => {
-    const priorityColors: { [key: string]: "sky" | "amber" | "tomato" } = {
-      "low": "sky",
-      "medium": "amber",
-      "high": "tomato"
-    }
-    return priorityColors[priority]
   }
 
   return (
-    <Card>
-      <Flex align="center" gap="4">
-        <Text weight="bold">{task.title}</Text>
-        <Badge color={getPriorityColor(task.priority)}>{task.priority}</Badge>
-      </Flex>
-      <Text as="p" my="3">{task.description}</Text>
-      <Flex gap="2">
-        {task.status !== "done" && (
-            <Button color={getActionColor(task.status)}>
-                {getActionText(task.status)}
-            </Button>
-        )}
-        <Button color="red">Excluir</Button>
-      </Flex>
-    </Card>
+    <div className="card mb-3">
+      <div className="card-header">
+        <strong>{task.title}</strong>
+      </div>
+      <div className="card-body">
+        <p>{task.description}</p>
+        <ul>
+          <li>{task.status}</li>
+          <li>{task.priority}</li>
+        </ul>
+      </div>
+      <div className="card-footer d-flex justify-content-end gap-2">
+        <button className="btn btn-sm btn-primary" onClick={update}>Atualizar</button>
+        <button className="btn btn-sm btn-danger" onClick={() => deleteTask(task.id)}>Excluir</button>
+      </div>
+    </div>
   )
 }
